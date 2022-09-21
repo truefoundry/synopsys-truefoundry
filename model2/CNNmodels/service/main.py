@@ -86,8 +86,8 @@ if modelFileName=="model_aug_2022.h5":
 run_id = os.getenv("RUN_ID_FOR_MODELS") or "13e6bdffa50c458f8e9965a7130bbd09"
 modelFileName = f'{modelFileName[0:-3]}/{modelFileName}'
 
-client = mlf.get_client(tracking_uri="https://app.develop.truefoundry.tech", api_key="djE6dHJ1ZWZvdW5kcnk6dXNlci10cnVlZm91bmRyeTo0MTZjOTA=")
-#client = mlf.get_client()
+
+client = mlf.get_client()
 run = client.get_run(run_id)
 local_path=run.download_artifact(path=modelFileName, dest_path=".")
 
