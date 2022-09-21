@@ -10,7 +10,8 @@ from adabelief_tf import AdaBeliefOptimizer
 from tensorflow_addons.losses import SigmoidFocalCrossEntropy
 from datetime import datetime
 from fastapi import FastAPI
-
+from tensorflow.python.ops.numpy_ops import np_config
+np_config.enable_numpy_behavior()
 import pathlib
 
 
@@ -63,30 +64,32 @@ def get_input_df(dataset_path: str):
 
     return xformedTestDF
 
-def predictScratchForWafer(imageArray: np.ndarray, model: tf.keras.models.Sequential) -> np.ndarray:
+def predictScratchForWafer(imageArrayList: List[np.ndarray], model: tf.keras.models.Sequential) -> np.ndarray:
     try:
         # print(f"image shape: {imageArray.shape}")
-        pred = model.predict(imageArray.reshape(1, imageArray.shape[0], imageArray.shape[1], 1).astype('float'))
+        inp_arr = [imageArray.reshape(1, imageArray.shape[0], imageArray.shape[1], 1).astype('float') for imageArray in imageArrayList]
+        inp_arr = tf.experimental.numpy.vstack(tuple(inp_arr))
+        pred_list = model.predict_on_batch(inp_arr)
         # print(f"prediction: {pred}")
-        return np.squeeze(pred)
+        return [np.squeeze(pred) for pred in pred_list]
     except Exception as e:
         print(f"Error: {str(e)}")
         raise
 
-modelFileName = os.getenv("MODEL_NAME") #or "model_aug_2022.h5"
+modelFileName = os.getenv("MODEL_NAME") or "model_3_328MB.h5"
 IMAGE_WIDTH=256
 IMAGE_HEIGHT=256
 if modelFileName=="model_aug_2022.h5":
     IMAGE_HEIGHT=128
     IMAGE_WIDTH=128
 
-run_id = os.getenv("RUN_ID_FOR_MODELS") #or "13e6bdffa50c458f8e9965a7130bbd09"
+run_id = os.getenv("RUN_ID_FOR_MODELS") or "13e6bdffa50c458f8e9965a7130bbd09"
 modelFileName = f'{modelFileName[0:-3]}/{modelFileName}'
 
-#client = mlf.get_client(tracking_uri="https://app.develop.truefoundry.tech", api_key="djE6dHJ1ZWZvdW5kcnk6dXNlci10cnVlZm91bmRyeTo0MTZjOTA=")
-client = mlf.get_client()
+client = mlf.get_client(tracking_uri="https://app.develop.truefoundry.tech", api_key="djE6dHJ1ZWZvdW5kcnk6dXNlci10cnVlZm91bmRyeTo0MTZjOTA=")
+#client = mlf.get_client()
 run = client.get_run(run_id)
-local_path=run.download_artifact(path=modelFileName, dest_path=".")
+local_path=modelFileName #run.download_artifact(path=modelFileName, dest_path=".")
 
 predictionModel = load_model(model_filepath=local_path)
 predictionModel.load_weights(local_path)
@@ -97,7 +100,8 @@ app = FastAPI(docs_url="/")
 def batch_predict(input_array: List[List[List[float]]]):
     start_t = datetime.now()
     xformed_input_array = [transform_waferMap_dimension(np.array(img), IMAGE_WIDTH, IMAGE_HEIGHT) for img in input_array]
-    pred = [int(predictScratchForWafer(wm, predictionModel).argmax()) for wm in xformed_input_array ]
+    outputs = predictScratchForWafer(xformed_input_array, predictionModel)
+    pred = [int(output.argmax()) for output in outputs ]
     end_t = datetime.now()
     avg_time = (end_t-start_t)/(len(input_array))
     return {
@@ -105,6 +109,6 @@ def batch_predict(input_array: List[List[List[float]]]):
         "predicted_classes": pred
     }
 
-# import uvicorn
-# if __name__=="__main__":
-#     uvicorn.run(app, port=4000, log_level="info")
+import uvicorn
+if __name__=="__main__":
+    uvicorn.run(app, port=4000, log_level="info")
