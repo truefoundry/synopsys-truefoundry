@@ -89,7 +89,7 @@ modelFileName = f'{modelFileName[0:-3]}/{modelFileName}'
 client = mlf.get_client(tracking_uri="https://app.develop.truefoundry.tech", api_key="djE6dHJ1ZWZvdW5kcnk6dXNlci10cnVlZm91bmRyeTo0MTZjOTA=")
 #client = mlf.get_client()
 run = client.get_run(run_id)
-local_path=modelFileName #run.download_artifact(path=modelFileName, dest_path=".")
+local_path=run.download_artifact(path=modelFileName, dest_path=".")
 
 predictionModel = load_model(model_filepath=local_path)
 predictionModel.load_weights(local_path)
