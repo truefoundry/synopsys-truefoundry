@@ -1,7 +1,7 @@
 import argparse
 import logging
 
-from servicefoundry import Build, Job, PythonBuild, Resources
+from servicefoundry import Build, Job, PythonBuild, Resources, Schedule
 
 logging.basicConfig(level=logging.INFO)
 parser = argparse.ArgumentParser()
@@ -27,5 +27,6 @@ job = Job(
     resources=Resources(
         cpu_request=1, cpu_limit=1.5, memory_request=2000, memory_limit=2500
     ),
+    trigger=Schedule(schedule="0 */12 * * *"),
 )
 job.deploy(workspace_fqn=args.workspace_fqn)
