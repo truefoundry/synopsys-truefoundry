@@ -16,3 +16,5 @@ output [
     dims: [ 2 ]
   }
 ]
+instance_group [{ kind: KIND_CPU, count: 1 }]
+dynamic_batching { }

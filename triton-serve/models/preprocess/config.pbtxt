@@ -19,4 +19,5 @@ output [
 }
 ]
 
-instance_group [{ kind: KIND_CPU }]
+instance_group [{ kind: KIND_CPU, count: 2 }]
+dynamic_batching { }
