@@ -109,6 +109,3 @@ def batch_predict(input_array: List[List[List[float]]]):
         "predicted_classes": pred
     }
 
-import uvicorn
-if __name__=="__main__":
-    uvicorn.run(app, port=4000, log_level="info")
