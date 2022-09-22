@@ -1,0 +1,6 @@
+*.py[cod]
+.ipynb_checkpoints/
+models/model_3_328mb/1/*
+!models/model_3_328mb/1/.gitkeep
+*.h5
+
