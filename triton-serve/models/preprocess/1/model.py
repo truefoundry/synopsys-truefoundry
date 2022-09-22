@@ -1,4 +1,5 @@
 import json
+from typing import Sequence
 
 import cv2 as cv
 import numpy as np
@@ -13,9 +14,8 @@ def prepare_image(
     target_width: int = 128,
     target_height: int = 128
 ):
-    image = image.astype('uint8')
     _, image = cv.threshold(image, thresh=threshold, maxval=max_value, type=cv.THRESH_BINARY)
-    image = tf.expand_dims(input=image, axis=2)
+    image = np.expand_dims(image, axis=2)
     image = tf.image.resize_with_pad(
         image,
         target_width=target_width, 
@@ -23,6 +23,25 @@ def prepare_image(
         method="bilinear"
     )
     return image
+
+def prepare_images(
+    images: Sequence[np.ndarray],
+    threshold: int = 1,
+    max_value: int = 1,
+    target_width: int = 128,
+    target_height: int = 128
+):
+    image_tensors = [
+        prepare_image(
+            image,
+            threshold=threshold,
+            max_value=max_value,
+            target_width=target_width,
+            target_height=target_height
+        )
+        for image in images
+    ]
+    return tf.stack(image_tensors).numpy()
 
 
 class TritonPythonModel:
@@ -35,15 +54,15 @@ class TritonPythonModel:
         output0_dtype = self.output0_dtype
         responses = []
         for request in requests:
+            # each request is a batch of images
             in_0 = pb_utils.get_input_tensor_by_name(request, "INPUT_0")
-            image = prepare_image(
+            image = prepare_images(
                 in_0.as_numpy(),
                 threshold=1,
                 max_value=1,
                 target_width=256,
                 target_height=256
             )
-            # TODO: Check if we need to add batch dim here
             out_tensor_0 = pb_utils.Tensor("OUTPUT_0", image.astype(output0_dtype))
             inference_response = pb_utils.InferenceResponse(output_tensors=[out_tensor_0])
             responses.append(inference_response)
