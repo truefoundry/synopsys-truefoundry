@@ -1,3 +1,11 @@
+Notes
+---
+
+- The image size can be reduced if we can rewrite the whole preprocessing without using tensorflow
+- The models can be easily hosted on s3 or any cloud bucket to reduce image size further
+- Model can be used with grpc on port 8001
+
+
 Keras to Saved Model
 ---
 
@@ -44,6 +52,12 @@ File Tree
 └── scripts
     ├── convert_keras_to_savedmodel.py
     └── requirements.txt
+```
+
+Deploy
+---
+```
+python deploy.py --workspace_fqn "v1:tfy-dev-cluster:synopsys-demo"
 ```
 
 
