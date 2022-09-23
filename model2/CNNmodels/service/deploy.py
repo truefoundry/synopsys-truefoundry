@@ -19,6 +19,9 @@ args = parser.parse_args()
 service_names = ["synopsys2-model-aug", "synopsys2-model-3-328mb", "synopsys-demo-model-08"]
 model_names = ["model_aug_2022.h5", "model_3_328MB.h5", "demo_model_08.h5"]
 
+# service_names = ["synopsys2-model-3-328mb"]
+# model_names = ["model_3_328MB.h5"]
+
 for model_name, service_name in zip(model_names, service_names):
     service = Service(
         name=service_name,
@@ -37,7 +40,7 @@ for model_name, service_name in zip(model_names, service_names):
         },
         ports=[{"port": 4000}],
         resources=Resources(
-            cpu_request=0.5, cpu_limit=1.5, memory_limit=2500, memory_request=1500
+            cpu_request=2, cpu_limit=3, memory_limit=4000, memory_request=2500
         ),
     )
     service.deploy(workspace_fqn=args.workspace_fqn)

@@ -1,6 +1,8 @@
 # test_model.py
 
 import pandas as pd
+import requests
+import time
 import mlfoundry as mlf
 from xgboost import XGBClassifier
 from sklearn.metrics import confusion_matrix, classification_report, ConfusionMatrixDisplay, accuracy_score, precision_score, recall_score, f1_score
@@ -8,11 +10,13 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 
 
-#client = mlf.get_client()
-client = mlf.get_client(tracking_uri="https://app.devtest.truefoundry.tech", api_key="djE6dHJ1ZWZvdW5kcnk6dXNlci10cnVlZm91bmRyeTo0MTZjOTA=")
+client = mlf.get_client()
+#client = mlf.get_client(tracking_uri="https://app.devtest.truefoundry.tech", api_key="djE6dHJ1ZWZvdW5kcnk6dXNlci10cnVlZm91bmRyeTo0MTZjOTA=")
 run = client.create_run(project_name='synopsys-xgb-classifier')
 run.set_tags({'framework': 'xgboost', 'task': 'classification'})
 
+resp = requests.get("https://tfy-nikhil-bucket.s3.eu-west-1.amazonaws.com/conf_df.csv")
+open("conf_df.csv", "wb").write(resp.content)
 df = pd.read_csv('conf_df.csv')
 
 model = XGBClassifier()
@@ -23,7 +27,7 @@ run.log_params(model.get_params())
 X = df.drop('classification', axis=1)
 Y = df['classification']
 X_train, X_test, Y_train, Y_test=train_test_split(X, Y, test_size=0.15)
-
+time.sleep(10)
 model.fit(X_train, Y_train)
 
 
@@ -45,6 +49,7 @@ run.log_dataset(
    actuals=Y_test
 )
 
+time.sleep(10)
 conf_matrix_train = confusion_matrix(Y_train, Y_pred_train)
 disp = ConfusionMatrixDisplay(confusion_matrix=conf_matrix_train, display_labels=["0","1"]).plot()
 run.log_plots({"confusion_matrix_train": plt}, step=1)
@@ -57,6 +62,7 @@ run.log_plots({"confusion_matrix_test": plt}, step=1)
 class_report_train = classification_report(Y_train, Y_pred_train, output_dict=True)
 class_report_test = classification_report(Y_test, Y_pred_test, output_dict=True)
 
+time.sleep(10)
 run.log_model(
    name="synopsys-xgboost-model",
    model=model,
