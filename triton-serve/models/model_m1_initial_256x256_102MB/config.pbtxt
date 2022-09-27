@@ -1,17 +1,17 @@
-name: "model_3_328mb"
+name: "model_m1_initial_256x256_102MB"
 backend: "tensorflow"
 platform: "tensorflow_savedmodel"
 max_batch_size: 64
 input [
   {
-    name: "random_flip_input"
+    name: "conv2d_input"
     data_type: TYPE_FP32
     dims: [ 256, 256, 1 ]
   }
 ]
 output [
   {
-    name: "dense_4"
+    name: "dense_2"
     data_type: TYPE_FP32
     dims: [ 2 ]
   }
