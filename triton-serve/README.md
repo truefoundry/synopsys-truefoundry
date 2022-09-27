@@ -34,7 +34,7 @@ Curl Test (V2 Protocol)
 
 ```shell
 cd client/
-BASE_URL="https://synopsys-triton-serve-synopsys-demo.tfy-ctl-euwe1-develop.develop.truefoundry.tech"
+BASE_URL="https://synopsys-triton-serve-synopsys-demo-8000.tfy-ctl-euwe1-develop.develop.truefoundry.tech"
 curl -X POST -H 'Content-Type: application/json' -d @./input-v2-128.json "${BASE_URL}/v2/models/m2_new_128x128_74MB/infer"
 curl -X POST -H 'Content-Type: application/json' -d @./input-v2-256.json "${BASE_URL}/v2/models/m1_initial_256x256_102MB/infer"
 curl -X POST -H 'Content-Type: application/json' -d @./input-v2-256.json "${BASE_URL}/v2/models/m3_big_256x256_328MB/infer"
@@ -150,7 +150,7 @@ Python Client Test
 ```shell
 cd client
 pip install -r requirements.txt
-HOST=synopsys-triton-serve-synopsys-demo.tfy-ctl-euwe1-develop.develop.truefoundry.tech
+HOST=synopsys-triton-serve-synopsys-demo-8000.tfy-ctl-euwe1-develop.develop.truefoundry.tech
 python client.py --ssl --host "${HOST}" --model_name "m2_new_128x128_74MB"  --data @./input-128.json
 python client.py --ssl --host "${HOST}" --model_name "m1_initial_256x256_102MB"  --data @./input-256.json
 python client.py --ssl --host "${HOST}" --model_name "m3_big_256x256_328MB"  --data @./input-256.json

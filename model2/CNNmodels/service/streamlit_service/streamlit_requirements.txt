@@ -1,6 +1,6 @@
 pandas==1.4.4
 numpy==1.23.3
-streamlit
-pillow
-matplotlib
-requests
+streamlit==1.13.0
+Pillow==9.2.0
+matplotlib==3.6.0
+requests==2.28.1
