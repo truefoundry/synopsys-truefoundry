@@ -12,7 +12,7 @@ from sklearn.model_selection import train_test_split
 
 client = mlf.get_client()
 #client = mlf.get_client(tracking_uri="https://app.devtest.truefoundry.tech", api_key="djE6dHJ1ZWZvdW5kcnk6dXNlci10cnVlZm91bmRyeTo0MTZjOTA=")
-run = client.create_run(project_name='synopsys-xgb-classifier')
+run = client.create_run(project_name='synopsys-xgb-classifier', run_name="xgb-classifier")
 run.set_tags({'framework': 'xgboost', 'task': 'classification'})
 
 resp = requests.get("https://tfy-nikhil-bucket.s3.eu-west-1.amazonaws.com/conf_df.csv")

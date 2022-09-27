@@ -29,8 +29,8 @@ service = Service(
     ),
     env={
         # These will automatically map the secret value to the environment variable.
-        "MLF_HOST": "tfy-secret://user-truefoundry:synopsys-demo:MLF_HOST",
-        "MLF_API_KEY": "tfy-secret://user-truefoundry:synopsys-demo:MLF_API_KEY",
+        "MLF_HOST": "tfy-secret://demo-synopsys:synopsys-demo:MLF_HOST",
+        "MLF_API_KEY": "tfy-secret://demo-synopsys:synopsys-demo:MLF_API_KEY",
         "RUN_ID_FOR_MODELS": "13e6bdffa50c458f8e9965a7130bbd09",
         "FASTAPI_MODEL_M1": "https://synopsys-model-m1-synopsys-demo.tfy-ctl-euwe1-develop.develop.truefoundry.tech",
         "FASTAPI_MODEL_M2": "https://synopsys-model-m2-synopsys-demo.tfy-ctl-euwe1-develop.develop.truefoundry.tech",

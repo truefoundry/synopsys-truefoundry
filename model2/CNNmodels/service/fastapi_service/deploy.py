@@ -33,8 +33,8 @@ for model_name, service_name in zip(model_names, service_names):
         ),
         env={
             # These will automatically map the secret value to the environment variable.
-            "MLF_HOST": "tfy-secret://user-truefoundry:synopsys-demo:MLF_HOST",
-            "MLF_API_KEY": "tfy-secret://user-truefoundry:synopsys-demo:MLF_API_KEY",
+            "MLF_HOST": "tfy-secret://demo-synopsys:synopsys-demo:MLF_HOST",
+            "MLF_API_KEY": "tfy-secret://demo-synopsys:synopsys-demo:MLF_API_KEY",
             "MODEL_NAME": model_name,
             "RUN_ID_FOR_MODELS": "13e6bdffa50c458f8e9965a7130bbd09"
         },
