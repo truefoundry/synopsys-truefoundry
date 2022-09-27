@@ -31,11 +31,14 @@ service = Service(
         # These will automatically map the secret value to the environment variable.
         "MLF_HOST": "tfy-secret://user-truefoundry:synopsys-demo:MLF_HOST",
         "MLF_API_KEY": "tfy-secret://user-truefoundry:synopsys-demo:MLF_API_KEY",
-        "RUN_ID_FOR_MODELS": "13e6bdffa50c458f8e9965a7130bbd09"
+        "RUN_ID_FOR_MODELS": "13e6bdffa50c458f8e9965a7130bbd09",
+        "FASTAPI_MODEL_M1": "https://synopsys-model-m1-synopsys-demo.tfy-ctl-euwe1-develop.develop.truefoundry.tech",
+        "FASTAPI_MODEL_M2": "https://synopsys-model-m2-synopsys-demo.tfy-ctl-euwe1-develop.develop.truefoundry.tech",
+        "FASTAPI_MODEL_M3": "https://synopsys-model-m3-synopsys-demo.tfy-ctl-euwe1-develop.develop.truefoundry.tech"
     },
     ports=[{"port": 8501}],
     resources=Resources(
-        cpu_request=3.5, cpu_limit=4, memory_limit=4, memory_request=3
+        cpu_request=0.75, cpu_limit=1, memory_limit=1500, memory_request=1000
     ),
 )
 service.deploy(workspace_fqn=args.workspace_fqn)

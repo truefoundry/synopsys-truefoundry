@@ -40,7 +40,7 @@ for model_name, service_name in zip(model_names, service_names):
         },
         ports=[{"port": 4000}],
         resources=Resources(
-            cpu_request=2.5, cpu_limit=3, memory_limit=2500, memory_request=1500
+            cpu_request=2.5, cpu_limit=3, memory_limit=1500, memory_request=1200
         ),
     )
     service.deploy(workspace_fqn=args.workspace_fqn)
