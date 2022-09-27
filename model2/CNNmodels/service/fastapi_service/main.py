@@ -89,7 +89,7 @@ modelFileName = f'{modelFileName[0:-3]}/{modelFileName}'
 
 client = mlf.get_client()
 run = client.get_run(run_id)
-local_path=run.download_artifact(path=modelFileName, dest_path=".")
+local_path=run.download_artifact(path=modelFileName, dest_path="..")
 
 predictionModel = load_model(model_filepath=local_path)
 predictionModel.load_weights(local_path)
@@ -108,4 +108,3 @@ def batch_predict(input_array: List[List[List[float]]]):
         "average_inference_time": avg_time,
         "predicted_classes": pred
     }
-

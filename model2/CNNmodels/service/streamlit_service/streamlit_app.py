@@ -1,10 +1,12 @@
 import io
 import os
+
+import requests
 from PIL import Image
 import streamlit as st
-from main import batch_predict
 import matplotlib.pyplot as plt
 import numpy as np
+from urllib.parse import urljoin
 
 
 def load_image():
@@ -22,14 +24,25 @@ def load_image():
     else:
         return None
 
+
 def main():
-    st.title(f'Streamlit Demo for model: {os.getenv("MODEL_NAME")}')
+    st.title(f'Streamlit Demo for model: Synopsys')
     image = load_image()
     result = st.button('Run on image')
     if result:
+        results_dict = {}
         st.write('Calculating results...')
-        resp = batch_predict([result])
-        st.write(f'Prediction Class: {resp["predicted_classes"][0]}')
+
+        st.write("Results without using Triton Server")
+        model_names = ["M1", "M2", "M3"]
+
+        for model_name in model_names:
+            resp = requests.post(url=urljoin(os.getenv(f"FASTAPI_MODEL_{model_name}"), "/predict"), json=[image.tolist()]).json()
+            results_dict[model_name] = {
+                "prediction": "No Defect" if resp["predicted_classes"][0]==0 else "Defect Detected",
+                "prediction_time": resp["average_inference_time"]
+            }
+        st.table(results_dict)
 
 
 if __name__ == '__main__':
