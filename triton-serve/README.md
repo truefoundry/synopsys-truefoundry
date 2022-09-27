@@ -3,7 +3,7 @@ Notes
 
 - The image size can be reduced if we can rewrite the whole preprocessing without using tensorflow
 - The models can be easily hosted on s3 or any cloud bucket to reduce docker image size further
-- Model can be used with grpc on port 8001
+- Model can be exposed andused with grpc on port 8001
 
 
 Keras to Saved Model
@@ -13,6 +13,63 @@ Keras to Saved Model
 cd scripts
 ./run.sh
 ```
+
+Deploy
+---
+
+One time setup
+```shell
+sfy use server https://app.develop.truefoundry.tech/
+sfy login
+pip install -U servicefoundry==0.2.7
+```
+
+```shell
+python deploy.py --workspace_fqn "v1:tfy-dev-cluster:synopsys-demo"
+```
+
+
+Curl Test (V2 Protocol)
+---
+
+```shell
+cd client/
+BASE_URL="https://synopsys-triton-serve-synopsys-demo.tfy-ctl-euwe1-develop.develop.truefoundry.tech"
+curl -X POST -H 'Content-Type: application/json' -d @./input-v2-128.json "${BASE_URL}/v2/models/m2_new_128x128_74MB/infer"
+curl -X POST -H 'Content-Type: application/json' -d @./input-v2-256.json "${BASE_URL}/v2/models/m1_initial_256x256_102MB/infer"
+curl -X POST -H 'Content-Type: application/json' -d @./input-v2-256.json "${BASE_URL}/v2/models/m3_big_256x256_328MB/infer"
+```
+
+
+Output would look something like:
+
+```json
+{
+  "id": "1",
+  "model_name": "m3_big_256x256_328MB",
+  "model_version": "1",
+  "parameters": {
+    "sequence_id": 0,
+    "sequence_start": false,
+    "sequence_end": false
+  },
+  "outputs": [
+    {
+      "name": "OUTPUT",
+      "datatype": "FP32",
+      "shape": [
+        1,
+        2
+      ],
+      "data": [
+        0.6037940382957458,
+        0.39620596170425415
+      ]
+    }
+  ]
+}
+```
+
 
 File Tree
 ---
@@ -77,8 +134,6 @@ File Tree
 │   │   └── config.pbtxt
 │   └── preprocess
 │       ├── 1
-│       │   ├── __pycache__
-│       │   │   └── model.cpython-38.pyc
 │       │   └── model.py
 │       └── config.pbtxt
 ├── requirements.txt
@@ -88,53 +143,6 @@ File Tree
     └── run.sh
 ```
 
-Deploy
----
-```
-python deploy.py --workspace_fqn "v1:tfy-dev-cluster:synopsys-demo"
-```
-
-
-Curl Test (V2 Protocol)
----
-
-```shell
-
-BASE_URL="https://synopsys-triton-serve-synopsys-demo-8000.tfy-ctl-euwe1-develop.develop.truefoundry.tech"
-curl -X POST -H 'Content-Type: application/json' -d @./input-v2-128.json "${BASE_URL}/v2/models/m2_new_128x128_74MB/infer"
-curl -X POST -H 'Content-Type: application/json' -d @./input-v2-256.json "${BASE_URL}/v2/models/m1_initial_256x256_102MB/infer"
-curl -X POST -H 'Content-Type: application/json' -d @./input-v2-256.json "${BASE_URL}/v2/models/m3_big_256x256_328MB/infer"
-```
-
-
-Output would look something like:
-
-```json
-{
-  "id": "1",
-  "model_name": "m3_big_256x256_328MB",
-  "model_version": "1",
-  "parameters": {
-    "sequence_id": 0,
-    "sequence_start": false,
-    "sequence_end": false
-  },
-  "outputs": [
-    {
-      "name": "OUTPUT",
-      "datatype": "FP32",
-      "shape": [
-        1,
-        2
-      ],
-      "data": [
-        0.6037940382957458,
-        0.39620596170425415
-      ]
-    }
-  ]
-}
-```
 
 Python Client Test
 ---
@@ -142,7 +150,7 @@ Python Client Test
 ```shell
 cd client
 pip install -r requirements.txt
-HOST=synopsys-triton-serve-synopsys-demo-8000.tfy-ctl-euwe1-develop.develop.truefoundry.tech
+HOST=synopsys-triton-serve-synopsys-demo.tfy-ctl-euwe1-develop.develop.truefoundry.tech
 python client.py --ssl --host "${HOST}" --model_name "m2_new_128x128_74MB"  --data @./input-128.json
 python client.py --ssl --host "${HOST}" --model_name "m1_initial_256x256_102MB"  --data @./input-256.json
 python client.py --ssl --host "${HOST}" --model_name "m3_big_256x256_328MB"  --data @./input-256.json
