@@ -47,24 +47,25 @@ def prepare_images(
 class TritonPythonModel:
     def initialize(self, args):
         self.model_config = json.loads(args['model_config'])
-        output0_config = pb_utils.get_output_config_by_name(self.model_config, "OUTPUT_0")
-        self.output0_dtype = pb_utils.triton_string_to_numpy(output0_config['data_type'])
+        output_config = pb_utils.get_output_config_by_name(self.model_config, "OUTPUT")
+        self.output_dtype = pb_utils.triton_string_to_numpy(output_config['data_type'])
 
     def execute(self, requests):
-        output0_dtype = self.output0_dtype
         responses = []
         for request in requests:
             # each request is a batch of images
-            in_0 = pb_utils.get_input_tensor_by_name(request, "INPUT_0")
+            in_image = pb_utils.get_input_tensor_by_name(request, "INPUT_IMAGE")
+            in_resize_shape = pb_utils.get_input_tensor_by_name(request, "INPUT_RESIZE_SHAPE")
+            target_width, target_height = in_resize_shape.as_numpy()[0]
             image = prepare_images(
-                in_0.as_numpy(),
+                in_image.as_numpy(),
                 threshold=1,
                 max_value=1,
-                target_width=256,
-                target_height=256
+                target_width=target_width,
+                target_height=target_height
             )
-            out_tensor_0 = pb_utils.Tensor("OUTPUT_0", image.astype(output0_dtype))
-            inference_response = pb_utils.InferenceResponse(output_tensors=[out_tensor_0])
+            out_tensor = pb_utils.Tensor("OUTPUT", image.astype(self.output_dtype))
+            inference_response = pb_utils.InferenceResponse(output_tensors=[out_tensor])
             responses.append(inference_response)
         return responses
 

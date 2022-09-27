@@ -2,7 +2,7 @@ Notes
 ---
 
 - The image size can be reduced if we can rewrite the whole preprocessing without using tensorflow
-- The models can be easily hosted on s3 or any cloud bucket to reduce image size further
+- The models can be easily hosted on s3 or any cloud bucket to reduce docker image size further
 - Model can be used with grpc on port 8001
 
 
@@ -11,8 +11,7 @@ Keras to Saved Model
 
 ```shell
 cd scripts
-pip install -U -r requirements.txt
-python convert_keras_to_savedmodel.py --inp ../../model_3_328MB.h5 --out ../models/model_3_328mb/1/model.savedmodel
+./run.sh
 ```
 
 File Tree
@@ -27,15 +26,47 @@ File Tree
 ├── README.md
 ├── client
 │   ├── client.py
+│   ├── input-128.json
+│   ├── input-256.json
+│   ├── input-v2-128.json
+│   ├── input-v2-256.json
 │   └── requirements.txt
+├── deploy.py
 ├── models
-│   ├── ensemble
+│   ├── m1_initial_256x256_102MB
 │   │   ├── 1
 │   │   │   └── .gitkeep
 │   │   └── config.pbtxt
-│   ├── model_3_328mb
+│   ├── m2_new_128x128_74MB
 │   │   ├── 1
-│   │   │   ├── .gitkeep
+│   │   │   └── .gitkeep
+│   │   └── config.pbtxt
+│   ├── m3_big_256x256_328MB
+│   │   ├── 1
+│   │   │   └── .gitkeep
+│   │   └── config.pbtxt
+│   ├── model_m1_initial_256x256_102MB
+│   │   ├── 1
+│   │   │   └── model.savedmodel
+│   │   │       ├── assets
+│   │   │       ├── keras_metadata.pb
+│   │   │       ├── saved_model.pb
+│   │   │       └── variables
+│   │   │           ├── variables.data-00000-of-00001
+│   │   │           └── variables.index
+│   │   └── config.pbtxt
+│   ├── model_m2_new_128x128_74MB
+│   │   ├── 1
+│   │   │   └── model.savedmodel
+│   │   │       ├── assets
+│   │   │       ├── keras_metadata.pb
+│   │   │       ├── saved_model.pb
+│   │   │       └── variables
+│   │   │           ├── variables.data-00000-of-00001
+│   │   │           └── variables.index
+│   │   └── config.pbtxt
+│   ├── model_m3_big_256x256_328MB
+│   │   ├── 1
 │   │   │   └── model.savedmodel
 │   │   │       ├── assets
 │   │   │       ├── keras_metadata.pb
@@ -46,12 +77,15 @@ File Tree
 │   │   └── config.pbtxt
 │   └── preprocess
 │       ├── 1
+│       │   ├── __pycache__
+│       │   │   └── model.cpython-38.pyc
 │       │   └── model.py
 │       └── config.pbtxt
 ├── requirements.txt
 └── scripts
     ├── convert_keras_to_savedmodel.py
-    └── requirements.txt
+    ├── requirements.txt
+    └── run.sh
 ```
 
 Deploy
@@ -65,13 +99,20 @@ Curl Test (V2 Protocol)
 ---
 
 ```shell
-! curl -X POST -H 'Content-Type: application/json'  -d '{"id": "1", "inputs": [{"name": "INPUT", "shape": [1, 26, 26], "datatype": "UINT8", "data": [[[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 2, 2, 1, 2, 2, 1, 1, 1, 0, 0, 0, 0],[0, 0, 0, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 0, 0, 0],[0, 0, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],[0, 0, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0],[0, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0],[0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0],[1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],[2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1],[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1],[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],[1, 1, 1, 1, 1, 1, 2, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],[2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1],[0, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 0],[0, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 0],[0, 0, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1, 0, 0],[0, 0, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 2, 0, 0],[0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 0, 0, 0],[0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 2, 2, 0, 0, 0, 0],[0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]]}], "outputs": [{"name": "OUTPUT"}]}' 'https://synopsys-triton-serve-synopsys-demo-8000.tfy-ctl-euwe1-develop.develop.truefoundry.tech/v2/models/ensemble/infer'
+
+BASE_URL="https://synopsys-triton-serve-synopsys-demo-8000.tfy-ctl-euwe1-develop.develop.truefoundry.tech"
+curl -X POST -H 'Content-Type: application/json' -d @./input-v2-128.json "${BASE_URL}/v2/models/m2_new_128x128_74MB/infer"
+curl -X POST -H 'Content-Type: application/json' -d @./input-v2-256.json "${BASE_URL}/v2/models/m1_initial_256x256_102MB/infer"
+curl -X POST -H 'Content-Type: application/json' -d @./input-v2-256.json "${BASE_URL}/v2/models/m3_big_256x256_328MB/infer"
 ```
+
+
+Output would look something like:
 
 ```json
 {
   "id": "1",
-  "model_name": "ensemble",
+  "model_name": "m3_big_256x256_328MB",
   "model_version": "1",
   "parameters": {
     "sequence_id": 0,
@@ -95,11 +136,14 @@ Curl Test (V2 Protocol)
 }
 ```
 
-Client Test
+Python Client Test
 ---
 
 ```shell
 cd client
-pip install -U -r requirements.txt
-python client.py --data "[[[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 2, 2, 1, 2, 2, 1, 1, 1, 0, 0, 0, 0],[0, 0, 0, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 0, 0, 0],[0, 0, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],[0, 0, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0],[0, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0],[0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0],[1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],[2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1],[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1],[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],[1, 1, 1, 1, 1, 1, 2, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],[2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1],[0, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 0],[0, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 0],[0, 0, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1, 0, 0],[0, 0, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 2, 0, 0],[0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 0, 0, 0],[0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 2, 2, 0, 0, 0, 0],[0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]]" --ssl --host "synopsys-triton-serve-synopsys-demo-8000.tfy-ctl-euwe1-develop.develop.truefoundry.tech/"
+pip install -r requirements.txt
+HOST=synopsys-triton-serve-synopsys-demo-8000.tfy-ctl-euwe1-develop.develop.truefoundry.tech
+python client.py --ssl --host "${HOST}" --model_name "m2_new_128x128_74MB"  --data @./input-128.json
+python client.py --ssl --host "${HOST}" --model_name "m1_initial_256x256_102MB"  --data @./input-256.json
+python client.py --ssl --host "${HOST}" --model_name "m3_big_256x256_328MB"  --data @./input-256.json
 ```

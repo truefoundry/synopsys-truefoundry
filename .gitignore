@@ -1,1 +1,7 @@
+*.py[cod]
+*.env
+*.h5
+.idea
+.ipynb_checkpoints
+.DS_Store
 model2/CNNmodels/service/model_3_328MB

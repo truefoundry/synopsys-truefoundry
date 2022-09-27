@@ -1,0 +1,20 @@
+name: "model_m2_new_128x128_74MB"
+backend: "tensorflow"
+platform: "tensorflow_savedmodel"
+max_batch_size: 64
+input [
+  {
+    name: "conv2d_input"
+    data_type: TYPE_FP32
+    dims: [ 128, 128, 1 ]
+  }
+]
+output [
+  {
+    name: "dense_3"
+    data_type: TYPE_FP32
+    dims: [ 2 ]
+  }
+]
+instance_group [{ kind: KIND_CPU, count: 1 }]
+dynamic_batching { }
