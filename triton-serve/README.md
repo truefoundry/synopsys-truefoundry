@@ -26,15 +26,47 @@ File Tree
 ├── README.md
 ├── client
 │   ├── client.py
+│   ├── input-128.json
+│   ├── input-256.json
+│   ├── input-v2-128.json
+│   ├── input-v2-256.json
 │   └── requirements.txt
+├── deploy.py
 ├── models
-│   ├── ensemble
+│   ├── m1_initial_256x256_102MB
 │   │   ├── 1
 │   │   │   └── .gitkeep
 │   │   └── config.pbtxt
-│   ├── model_3_328mb
+│   ├── m2_new_128x128_74MB
 │   │   ├── 1
-│   │   │   ├── .gitkeep
+│   │   │   └── .gitkeep
+│   │   └── config.pbtxt
+│   ├── m3_big_256x256_328MB
+│   │   ├── 1
+│   │   │   └── .gitkeep
+│   │   └── config.pbtxt
+│   ├── model_m1_initial_256x256_102MB
+│   │   ├── 1
+│   │   │   └── model.savedmodel
+│   │   │       ├── assets
+│   │   │       ├── keras_metadata.pb
+│   │   │       ├── saved_model.pb
+│   │   │       └── variables
+│   │   │           ├── variables.data-00000-of-00001
+│   │   │           └── variables.index
+│   │   └── config.pbtxt
+│   ├── model_m2_new_128x128_74MB
+│   │   ├── 1
+│   │   │   └── model.savedmodel
+│   │   │       ├── assets
+│   │   │       ├── keras_metadata.pb
+│   │   │       ├── saved_model.pb
+│   │   │       └── variables
+│   │   │           ├── variables.data-00000-of-00001
+│   │   │           └── variables.index
+│   │   └── config.pbtxt
+│   ├── model_m3_big_256x256_328MB
+│   │   ├── 1
 │   │   │   └── model.savedmodel
 │   │   │       ├── assets
 │   │   │       ├── keras_metadata.pb
@@ -45,12 +77,15 @@ File Tree
 │   │   └── config.pbtxt
 │   └── preprocess
 │       ├── 1
+│       │   ├── __pycache__
+│       │   │   └── model.cpython-38.pyc
 │       │   └── model.py
 │       └── config.pbtxt
 ├── requirements.txt
 └── scripts
     ├── convert_keras_to_savedmodel.py
-    └── requirements.txt
+    ├── requirements.txt
+    └── run.sh
 ```
 
 Deploy
