@@ -77,8 +77,8 @@ cd model1/train_job
 python deploy.py --workspace_fqn v1:tfy-dev-cluster:synopsys-demo
 ```
 
-* For tracking the experimentation tracking dashboard -> https://app.develop.truefoundry.tech/mlfoundry
-* Click on project `synopsys-xgb-model1` to view the log params/metrics
+* For tracking the experimentation tracking [dashboard](https://app.develop.truefoundry.tech/mlfoundry)
+* Click on project `synopsys-xgb-classifier` to view the log params/metrics
 
 ### Model 2:
 
