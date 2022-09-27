@@ -13,6 +13,7 @@ from fastapi import FastAPI
 from tensorflow.python.ops.numpy_ops import np_config
 np_config.enable_numpy_behavior()
 import pathlib
+import time
 
 
 def convert_image_to_binary_image(img: np.ndarray, threshold: int = 1, max_value: int = 1) -> np.ndarray:
@@ -34,6 +35,7 @@ def transform_img_dimension(img: np.ndarray, target_width: int = 128, target_hei
     return xformed_img.copy()
 
 
+
 def transform_waferMap_dimension(input_img: np.ndarray, target_width: int = 128, target_height: int = 128) -> np.ndarray:
     img = input_img.copy()
     xformed_img = transform_img_dimension(img, target_width=target_width, target_height=target_height)
@@ -51,6 +53,7 @@ def load_model(model_filepath: pathlib.Path) -> tf.keras.models.Sequential:
         )
     return model
 
+
 def get_input_df(dataset_path: str):
     testDF = pd.concat([pd.read_pickle(fn) for fn in glob.glob(os.path.join(dataset_path, "wm811k_*_testing.pkl"))]).reset_index(drop=True)
 
@@ -64,6 +67,7 @@ def get_input_df(dataset_path: str):
 
     return xformedTestDF
 
+
 def predictScratchForWafer(imageArrayList: List[np.ndarray], model: tf.keras.models.Sequential) -> np.ndarray:
     try:
         # print(f"image shape: {imageArray.shape}")
@@ -76,33 +80,34 @@ def predictScratchForWafer(imageArrayList: List[np.ndarray], model: tf.keras.mod
         print(f"Error: {str(e)}")
         raise
 
-modelFileName = os.getenv("MODEL_NAME") or "model_3_328MB.h5"
+
 IMAGE_WIDTH=256
 IMAGE_HEIGHT=256
-if modelFileName=="model_aug_2022.h5":
-    IMAGE_HEIGHT=128
-    IMAGE_WIDTH=128
 
 run_id = os.getenv("RUN_ID_FOR_MODELS") or "13e6bdffa50c458f8e9965a7130bbd09"
-modelFileName = f'{modelFileName[0:-3]}/{modelFileName}'
-
 
 client = mlf.get_client()
+# client = mlf.get_client(tracking_uri="https://app.develop.truefoundry.tech", api_key="djE6dHJ1ZWZvdW5kcnk6dXNlci10cnVlZm91bmRyeTo0MTZjOTA=")
 run = client.get_run(run_id)
-local_path=run.download_artifact(path=modelFileName, dest_path=".")
 
-predictionModel = load_model(model_filepath=local_path)
-predictionModel.load_weights(local_path)
+model_names = ["demo_model_08.h5", "model_aug_2022.h5", "model_3_328MB.h5"]
+modelFileNames = [f'{modelName[0:-3]}/{modelName}' for modelName in model_names]
+local_paths = [run.download_artifact(path=modelFileName, dest_path=".") for modelFileName in modelFileNames]
+predictionModels = [load_model(model_filepath=local_path) for local_path in local_paths]
 
 app = FastAPI(docs_url="/")
 
 @app.post("/predict")
-def batch_predict(input_array: List[List[List[float]]]):
-    start_t = datetime.now()
-    xformed_input_array = [transform_waferMap_dimension(np.array(img), IMAGE_WIDTH, IMAGE_HEIGHT) for img in input_array]
-    outputs = predictScratchForWafer(xformed_input_array, predictionModel)
+def batch_predict(input_array: List[List[List[float]]], model_num, image_width=IMAGE_WIDTH, image_height=IMAGE_HEIGHT):
+    start_t = time.time()
+
+    if model_num == 1:
+        image_width = 128
+        image_height = 128
+    xformed_input_array = [transform_waferMap_dimension(np.array(img), image_width, image_height) for img in input_array]
+    outputs = predictScratchForWafer(xformed_input_array, predictionModels[model_num])
     pred = [int(output.argmax()) for output in outputs ]
-    end_t = datetime.now()
+    end_t = time.time()
     avg_time = (end_t-start_t)/(len(input_array))
     return {
         "average_inference_time": avg_time,
