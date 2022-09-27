@@ -12,7 +12,7 @@ service = Service(
     name="synopsys-triton-serve",
     image=Build(build_spec=DockerFileBuild()),
     ports=[{"port": 8000}, {"port": 8001}],
-    resources=Resources(memory_request=1200, memory_limit=1500, cpu_request=3, cpu_limit=4),
+    resources=Resources(memory_request=2000, memory_limit=2500, cpu_request=4, cpu_limit=4),
 )
 
 service.deploy(workspace_fqn=args.workspace_fqn)
