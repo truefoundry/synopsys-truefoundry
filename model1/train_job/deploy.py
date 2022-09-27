@@ -17,11 +17,11 @@ python_build = PythonBuild(
 )
 env = {
     # These will automatically map the secret value to the environment variable.
-    "MLF_HOST": "tfy-secret://user-truefoundry:synopsys-demo:MLF_HOST",
-    "MLF_API_KEY": "tfy-secret://user-truefoundry:synopsys-demo:MLF_API_KEY",
+    "MLF_HOST": "tfy-secret://demo-synopsys:synopsys-demo:MLF_HOST",
+    "MLF_API_KEY": "tfy-secret://demo-synopsys:synopsys-demo:MLF_API_KEY",
 }
 job = Job(
-    name="synopsys-zgboost-train",
+    name="synopsys-xgboost-train",
     image=Build(build_spec=python_build),
     env=env,
     resources=Resources(

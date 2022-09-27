@@ -35,7 +35,7 @@ def predict_fastapi(model_name, image):
         response = response.json()
         predicted_class = response["predicted_classes"][0]
         prediction = CLASSES[predicted_class]
-        inference_time = response["average_inference_time"]
+        inference_time = response.elapsed.total_seconds()
     except Exception:
         logging.exception(f"Error while calling {url}")
         prediction = "ERROR"
