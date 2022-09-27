@@ -32,10 +32,10 @@ def predict_fastapi(model_name, image):
     try:
         url = urljoin(os.getenv(f"FASTAPI_MODEL_{model_name}"), "/predict")
         response = requests.post(url=url, json=[image.tolist()])
+        inference_time = response.elapsed.total_seconds()
         response = response.json()
         predicted_class = response["predicted_classes"][0]
         prediction = CLASSES[predicted_class]
-        inference_time = response.elapsed.total_seconds()
     except Exception:
         logging.exception(f"Error while calling {url}")
         prediction = "ERROR"
@@ -87,10 +87,11 @@ def main():
     if result:
         results_dict = {}
         st.write('Calculating results...')
+        st.write('Note: Results include the network time')
         model_names = ["M1", "M2", "M3"]
         for model_name in model_names:
             results_dict[f"{model_name} (fastapi)"] = predict_fastapi(model_name, image)
-            results_dict[f"{model_name} (triton, includes network time)"] = predict_triton(model_name, image)
+            results_dict[f"{model_name} (triton)"] = predict_triton(model_name, image)
         st.table(results_dict)
 
 
