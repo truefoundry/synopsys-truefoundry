@@ -39,3 +39,5 @@ dependencies:
       - opencv-python-headless==4.5.5.62
       - opencv-contrib-python-headless==4.5.5.62
       - imbalanced-learn==0.9.1
+      - mlfoundry==0.4.10
+      - servicefoundry==0.2.15
