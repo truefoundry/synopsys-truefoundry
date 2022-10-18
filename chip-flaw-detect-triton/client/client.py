@@ -17,14 +17,8 @@ args = parser.parse_args()
 
 
 if args.ssl:
-    class Urllib3SSLContextWrapper:
-        def wrap_socket(self, sock, *_, **kwargs):
-            from urllib3.util.ssl_ import ssl_wrap_socket
-            return ssl_wrap_socket(sock, **kwargs)
-
     client_kwargs = {    
         "ssl": True,
-        "ssl_context_factory": Urllib3SSLContextWrapper
     }
 else:
     client_kwargs = {}
