@@ -20,9 +20,9 @@ service = Service(
         ),
     ),
     env={
-        "FASTAPI_MODEL_M1": "https://synopsys-model-m1-synopsys-demo.tfy-ctl-euwe1-production.production.truefoundry.com",
-        "FASTAPI_MODEL_M2": "https://synopsys-model-m2-synopsys-demo.tfy-ctl-euwe1-production.production.truefoundry.com",
-        "FASTAPI_MODEL_M3": "https://synopsys-model-m3-synopsys-demo.tfy-ctl-euwe1-production.production.truefoundry.com",
+        "FASTAPI_MODEL_M1": "https://synopsys-model-m1-demo-synopsys.tfy-ctl-euwe1-production.production.truefoundry.com",
+        "FASTAPI_MODEL_M2": "https://synopsys-model-m2-demo-synopsys.tfy-ctl-euwe1-production.production.truefoundry.com",
+        "FASTAPI_MODEL_M3": "https://synopsys-model-m3-demo-synopsys.tfy-ctl-euwe1-production.production.truefoundry.com",
         "TRITON_ENDPOINT": "https://synopsys-triton-serve-demo-synopsys-8000.tfy-ctl-euwe1-production.production.truefoundry.com",
     },
     ports=[{"port": 8501}],

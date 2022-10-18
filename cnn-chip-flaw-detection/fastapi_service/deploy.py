@@ -39,7 +39,7 @@ for model_name, service_name in MODEL_NAME_TO_SERVICE_NAME.items():
         },
         ports=[{"port": 8000}],
         resources=Resources(
-            cpu_request=2.5, cpu_limit=3, memory_request=1200, memory_limit=1500, 
+            cpu_request=1.5, cpu_limit=2, memory_request=1200, memory_limit=1500, 
         ),
     )
     # Finally, we call deploy to push it to Truefoundry platform
