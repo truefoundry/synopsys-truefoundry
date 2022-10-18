@@ -26,7 +26,6 @@ job = Job(
         "MLF_HOST": "https://app.truefoundry.com/",
         "MLF_API_KEY": "tfy-secret://demo-synopsis:synopsys-demo:MLF_API_KEY",
     },
-    env=env,
     resources=Resources(
         cpu_request=1, cpu_limit=1.5, memory_request=2000, memory_limit=2500
     ),

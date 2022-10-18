@@ -26,11 +26,11 @@ To run this example,
 1. Run `deploy.py` with the workspace fqn
 
    ```shell
-   python deploy.py --workspace-fqn <your-workspace-fqn>
+   python deploy.py --workspace_fqn <your-workspace-fqn>
    ```
 
    E.g.
 
    ```shell
-   python deploy.py --workspace-fqn "tfy-cluster-euwe1:demo-synopsys"
+   python deploy.py --workspace_fqn "tfy-cluster-euwe1:demo-synopsys"
    ```
