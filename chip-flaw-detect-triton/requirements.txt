@@ -1,4 +1,0 @@
-opencv-python-headless==4.5.5.62
-numpy==1.22.2
-tensorflow==2.9.0
-tensorflow-addons==0.17.1

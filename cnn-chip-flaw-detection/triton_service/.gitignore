@@ -1,0 +1,9 @@
+*.py[cod]
+.ipynb_checkpoints/
+*.h5
+models/model_m1_initial_256x256_102MB/1/*
+!models/model_m1_initial_256x256_102MB/1/.gitkeep
+models/model_m2_new_128x128_74MB/1/*
+!models/model_m2_new_128x128_74MB/1/.gitkeep
+models/model_m3_big_256x256_328MB/1/*
+!models/model_m3_big_256x256_328MB/1/.gitkeep

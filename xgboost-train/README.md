@@ -16,7 +16,7 @@ To run this example,
    ```
 
 1. Login to Truefoundry
-   
+
    ```shell
    sfy login
    ```

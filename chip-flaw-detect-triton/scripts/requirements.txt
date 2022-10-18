@@ -1,3 +1,0 @@
-tensorflow==2.9.0
-adabelief-tf==0.2.0
-tensorflow-addons==0.17.1
