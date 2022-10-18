@@ -1,8 +1,0 @@
-pandas==1.4.4
-scikit-learn==1.1.2
-matplotlib==3.6.0
-xgboost==1.6.2
-requests==2.28.1
-
-# experiment tracking
-mlfoundry>=0.4.3,<0.5
