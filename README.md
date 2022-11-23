@@ -55,7 +55,7 @@ Now simply run the command:
 
 ```shell
 cd cnn-chip-flaw-detection/streamlit_service
-python deploy_streamlit.py --workspace_fqn "tfy-cluster-euwe1:demo-synopsys"
+python deploy.py --workspace_fqn "tfy-cluster-euwe1:demo-synopsys"
 ```
 
 * You can find the endpoints on the applications page of [Truefoundry's dashboard](https://app.truefoundry.com/applications)
