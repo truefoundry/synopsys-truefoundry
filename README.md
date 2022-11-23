@@ -13,11 +13,10 @@ cd synopsys-truefoundry
 pip install -U -r requirements.txt
 ```
 
-### Login to SDKs
+### Login to SDK
 
 ```shell
-mlfoundry login --relogin
-sfy login --relogin
+mlfoundry login 
 ```
 
 ### Model 1 - Xgboost Train Job

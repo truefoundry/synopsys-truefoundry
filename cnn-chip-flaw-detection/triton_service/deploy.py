@@ -16,7 +16,7 @@ service = Service(
         {"port": 8001}, # gRPC
         {"port": 8002}, # metrics
     ],
-    resources=Resources(memory_request=2000, memory_limit=2500, cpu_request=3, cpu_limit='3500m'),
+    resources=Resources(memory_request=2000, memory_limit=2500, cpu_request=3, cpu_limit=3.5),
 )
 
 service.deploy(workspace_fqn=args.workspace_fqn)
