@@ -59,3 +59,5 @@ python deploy.py --workspace_fqn "tfy-cluster-euwe1:demo-synopsys"
 ```
 
 * You can find the endpoints on the applications page of [Truefoundry's dashboard](https://app.truefoundry.com/applications)
+
+https://gist.github.com/shubham-rai-tf/9e088d9de6e14fca16a7908eb9c5071a
